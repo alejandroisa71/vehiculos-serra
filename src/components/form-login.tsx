@@ -16,8 +16,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { loginAction } from "@/actions/auth-action";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 function FormLogin() {
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -26,10 +33,16 @@ function FormLogin() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    setError(null);
+    startTransition(async () => {
+      const response = await loginAction(values);
+      if (response.error) {
+        setError(response.error);
+      } else {
+        router.push("/dashboard");
+      }
+    });
   }
 
   return (
@@ -64,7 +77,10 @@ function FormLogin() {
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          {error && <FormMessage>{error}</FormMessage>}
+          <Button type="submit" disabled={isPending}>
+            Submit
+          </Button>
         </form>
       </Form>
     </div>

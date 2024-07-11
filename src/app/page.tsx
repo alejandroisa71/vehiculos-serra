@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import {db} from "@/lib/prisma";
 import {
   Table,
   TableBody,
@@ -13,7 +13,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 
 async function HomePage() {
-  const movimientos = await prisma.movimiento.findMany();
+  const movimientos = await db.movimiento.findMany();
   // console.log(movimientos)
   return (
     <div>

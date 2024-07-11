@@ -1,6 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
-import prisma from "@/lib/prisma";
+import {db} from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function createMovimiento(formData: FormData) {
@@ -13,7 +13,7 @@ export async function createMovimiento(formData: FormData) {
     return;
   }
 
-  const newMovimiento = await prisma.movimiento.create({
+  const newMovimiento = await db.movimiento.create({
     data: {
       vehiculo: vehiculo,
       detalle: detalle,
@@ -32,7 +32,7 @@ export async function removeMovimiento(formData: FormData) {
     return;
   }
 
-  await prisma.movimiento.delete({
+  await db.movimiento.delete({
     where: {
       id: parseInt(movimientoId),
     },
@@ -50,7 +50,7 @@ export async function updateMovimiento(formData: FormData) {
     return;
   }
 
-  await prisma.movimiento.update({
+  await db.movimiento.update({
     where: {
       id: parseInt(id),
     },
